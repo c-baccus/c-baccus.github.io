@@ -12,11 +12,11 @@
     --ink: #d9dde6;
     --ink-soft: #7f899c;
     --ink-faint: #232b3a;
-    --c-prompt: #d4b36a;   /* brass: */
-    --c-link: #7cc4e0;     /* cyan: */
-    --c-key: #c792ea;      /* violet:  */
-    --c-str: #9ece6a;      /* green:  */
-    --c-tag: #f08a8a;      /* coral:   */
+    --c-prompt: #d4b36a;   /* brass: prompts, section markers */
+    --c-link: #7cc4e0;     /* cyan: links */
+    --c-key: #c792ea;      /* violet: institutions, instruments, named things */
+    --c-str: #9ece6a;      /* green: years, numbers */
+    --c-tag: #f08a8a;      /* coral: status tags */
     --font: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
     --measure: 46rem;
   }
@@ -27,6 +27,7 @@
   a:hover, a:focus-visible { text-decoration-color: var(--c-link); outline: none; }
   a:focus-visible { outline: 1px solid var(--c-prompt); outline-offset: 2px; }
   .k { color: var(--c-key); font-style: normal; }
+  a.k, a.k:hover, a.k:focus-visible { color: var(--c-key); text-decoration: none; }
   .s { color: var(--c-str); }
   .c { color: var(--ink-soft); }
 
@@ -61,7 +62,7 @@
   .pubs .view { color: var(--c-prompt); border: 1px solid var(--c-prompt); padding: .05rem .7ch; text-decoration: none; white-space: nowrap; }
   .pubs .view:hover { background: var(--c-prompt); color: var(--bg); }
 
-  /* sky */
+  /* sky: on wide screens the canvas sits behind the page and the stars live on either side of the text */
   figure { margin: 0; position: relative; }
   #sky { display: block; width: 100%; height: 80vh; min-height: 560px; touch-action: manipulation; }
   @media (min-width: 1000px) {
@@ -77,9 +78,9 @@
     padding: 0; font-size: .55rem; line-height: 1.35;
     display: flex; align-items: center; gap: .55rem; max-width: calc(100vw - 2rem); z-index: 2;
   }
-  #panel.on { opacity: .88; pointer-events: auto; }
-  #panel .strip canvas { display: block; width: 7.5rem; height: .85rem; }
-  #panel .meta { white-space: nowrap; display: none; background: rgba(7,10,18,.85); padding: .15rem .4rem; }
+  #panel.on { opacity: 1; pointer-events: auto; }
+  #panel .strip canvas { display: block; width: 7.5rem; height: .85rem; opacity: .88; }
+  #panel .meta { white-space: nowrap; display: none; background: var(--bg); padding: .15rem .4rem; }
   #panel.full .meta { display: block; }
   #panel .head .nm { color: var(--c-prompt); } #panel .head .bayer { color: var(--ink-soft); }
   #panel .head a { margin-left: 1.2ch; }
@@ -111,10 +112,10 @@
 
   <section>
     <h2>about</h2>
-    <p>Sophomore undergraduate at <em class="k">NYU</em>.</p>
-    <p>Current work : SBI framework on <em class="k">CAMELS</em> simulation for parameter inference.</p>
-    <p>Previously, published what is currently the largest sample of high-redshift broad-line AGN from <em class="k">JWST/NIRSpec</em>.</p>
-    <p>Before that I worked on synapse pruning and the aging hippocampus at Stanford.</p>
+    <p>Sophomore undergraduate at <a class="k" href="https://as.nyu.edu/departments/physics.html" target="_blank" rel="noopener">NYU</a>.</p>
+    <p>My current research focuses on implementing Simulation-Based Inference techniques for the <a class="k" href="https://www.camel-simulations.org/" target="_blank" rel="noopener">CAMELS</a> simulation framework to constrain astrophysical and cosmological parameters.</p>
+    <p>Previously, I identified and published what is currently the largest sample of high-redshift broad-line AGN from <a class="k" href="https://jwst-docs.stsci.edu/jwst-near-infrared-spectrograph#gsc.tab=0" target="_blank" rel="noopener">JWST/NIRSpec</a>.</p>
+    <p>Before that, I worked on synapse pruning and the aging hippocampus at Stanford.</p>
   </section>
 
 
@@ -155,12 +156,13 @@
     <ul class="links">
       <li><a href="https://github.com/" target="_blank" rel="noopener">github</a></li>
       <li><a href="https://orcid.org/0009-0007-7847-3325" target="_blank" rel="noopener">orcid</a></li>
+      <li><a href="https://scholar.google.com/citations?user=zhWhIbsAAAAJ&amp;hl=en" target="_blank" rel="noopener">scholar</a></li>
       <li><a href="https://www.linkedin.com/in/caroline-baccus-646b5a39a/" target="_blank" rel="noopener">linkedin</a></li>
     </ul>
   </section>
 
-  <p class="skynote">Hover over a star for its spectrum (380–760 nm) hold for the name, redshift and distance, and click to learn more! Stellar spectra are from
-  MILES-library, M31 and M87 use MIUSCAT population models, and 3C 273 uses the Selsing et al. quasar composite.</p>
+  <p class="skynote">Hover over a star on the side for its spectrum (380–760 nm) hold for the name, redshift and distance, and click to learn more! Press S to toggle on/off all spectra.<br>
+(Stellar spectra are from MILES-library, M31 and M87 are from MIUSCAT population models, and 3C 273 is from Selsing et al. quasar composite.)</p>
 </main>
 
 <figure>
@@ -208,7 +210,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     { n:"Saiph", b:"κ Ori", t:"B0.5 Ia supergiant", T:26000, d:"~650 ly", pos:["L",.33,.95], w:"Saiph" },
     { n:"Rigel", b:"β Ori", t:"B8 Ia supergiant", T:12000, d:"~860 ly", pos:["L",.78,.94], w:"Rigel" },
   ];
-  // radial velocities 
+  // radial velocities (km/s) → z, for the stars
   const vrad = { Dubhe:-9, Merak:-12, Phecda:-13, Megrez:-13, Alioth:-9, Mizar:-6, Alkaid:-11, Caph:11, Schedar:-4, "Gamma Cas":-7, Ruchbah:7, Segin:-8,
     Deneb:-5, Sadr:-8, "Delta Cyg":-20, Gienah:-11, Albireo:-24, Vega:-14, "Epsilon Lyr":-28, "Zeta Lyr":-26, Sheliak:-19, Sulafat:-21, "Delta2 Lyr":-26,
     Betelgeuse:22, Bellatrix:18, Alnitak:19, Alnilam:26, Mintaka:19, Saiph:21, Rigel:18 };
@@ -227,17 +229,18 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
   ];
   // light-travel distance in Gly for flat ΛCDM, H0=70, Ωm=0.3
   function lookback(z) { const n = 400; let s = 0; for (let i = 0; i < n; i++) { const zz = z * (i + .5) / n; s += 1 / ((1 + zz) * Math.sqrt(0.3 * (1 + zz) ** 3 + 0.7)); } return 13.97 * s * z / n; }
-  // my BLAGNs: 
+  // my BLAGNs: GOODS-N (RA 189°, Dec +62°) sits just above the Dipper's bowl; EGS (RA 215°, Dec +53°) lies past Alkaid.
   // Each field is magnified so its members are visible; relative positions within a field are true.
-  const FIELDS = { "GOODS-N": { ra0: 189.22, dec0: 62.23, pos: ["L", .48, .05] }, "EGS": { ra0: 214.97, dec0: 52.90, pos: ["L", .93, .06] } };
+  const FIELDS = { "GOODS-N": { ra0: 189.22, dec0: 62.23, pos: ["L", .48, .05] }, "EGS": { ra0: 214.97, dec0: 52.90, pos: ["L", .86, .04] } };
   const KEEP = new Set(['JADES_1181_28074', 'CEERS_1345_1244', 'RUBIES_4233_50052']);
+  const FWHM = { JADES_1181_28074: 3840, CEERS_1345_1244: 2540, RUBIES_4233_50052: 2010 };   // broad Hα FWHM, km/s (Table 1)
   const mine = BLAGN.filter(r => KEEP.has(r[0])).map(([n, ra, dec, z, lrd, page, field]) => ({
-    n, b: `${field} · ${lrd ? 'Little Red Dot' : 'BLAGN'}`, z, lrd: !!lrd, page, field, ra, dec,
+    n, b: `${field} · ${lrd ? 'Little Red Dot' : 'BLAGN'} · 0.6–5.3 µm false colour`, z, lrd: !!lrd, page, field, ra, dec, fwhm: FWHM[n] || 2500,
     d: `~${lookback(z).toFixed(1)} Gly`, sp: null, kind: 'lrd', paper: true,
   }));
   const objects = [...stars, ...deep, ...mine];
-  const PAPER = 'Baccus_Xu_2026_ApJ.pdf';
-  const linkOf = o => o.paper ? `${PAPER}#page=${o.page}` : `https://en.wikipedia.org/wiki/${o.w}`;
+  const PAPER = 'https://iopscience.iop.org/article/10.3847/1538-4357/ae7de7/pdf';
+  const linkOf = o => o.paper ? `${PAPER}#page=12` : `https://en.wikipedia.org/wiki/${o.w}`;
   const byName = Object.fromEntries(stars.map(s => [s.n, s]));
 
   // ---------- colour helpers ----------
@@ -269,7 +272,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const css = getComputedStyle(document.documentElement);
   const C = k => css.getPropertyValue(k).trim();
-  let W, H, dpr, bg, field = [], hover = null, pinned = false, t0 = performance.now(), gapL = -1, gapR = -1, revealTimer = null;
+  let W, H, dpr, bg, field = [], hover = null, showAll = false, stripCache = new Map(), pinned = false, t0 = performance.now(), gapL = -1, gapR = -1, revealTimer = null;
 
   function resize() {
     dpr = Math.min(devicePixelRatio || 1, 2);
@@ -292,10 +295,10 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
     const inGap = x => gapL >= 0 && x > gapL - 10 && x < gapR + 10;
     const bandAt = (x, y) => Math.exp(-(((y / H) - (0.15 + 0.6 * (x / W))) ** 2) / 0.03);
-    // --- static backdrop 
+    // --- static backdrop, rendered once ---
     bg = document.createElement('canvas'); bg.width = W * dpr; bg.height = H * dpr;
     const g = bg.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // dust 
+    // dust: thousands of sub-pixel stars
     const dust = Math.round(W * H / 55);
     for (let i = 0; i < dust; i++) {
       const x = rnd() * W, y = rnd() * H;
@@ -305,16 +308,16 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
       g.fillStyle = `rgba(${210 + (rnd() * 45) | 0},${215 + (rnd() * 35) | 0},255,${a})`;
       g.fillRect(x, y, .6 + rnd() * .7, .6 + rnd() * .7);
     }
-    // --- resolved stars 
+    // --- resolved stars (drawn every frame so the bright ones can twinkle) ---
     field = [];
     const n = Math.round(W * H / 260);
     for (let i = 0; i < n; i++) {
       let x = rnd() * W, y = rnd() * H;
       if (inGap(x) && rnd() > 0.03) continue;
       if (rnd() > 0.45 + 0.55 * bandAt(x, y)) continue;
-      const m = Math.pow(rnd(), 3.4);                 
+      const m = Math.pow(rnd(), 3.4);                 // many faint, very few bright
       const T = 3000 * Math.pow(10, rnd() * 1.0);      // 3000..30000 K
-      field.push({ x, y, r: .25 + m * 1.5, a: .15 + m * .85, rgb: starRGB(T), p: rnd() * 6.28, f: .3 + rnd() * 1.1, tw: m > .45, spike: m > .9 });
+      field.push({ x, y, r: .25 + m * 1.5, a: .15 + m * .85, rgb: starRGB(T), p: rnd() * 6.28, f: .8 + rnd() * 2.2, tw: m > .25, spike: m > .9 });
     }
   }
 
@@ -341,7 +344,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     ctx.drawImage(bg, 0, 0, W, H);
     const t = (now - t0) / 1000;
     for (const s of field) {
-      const a = reduce || !s.tw ? s.a : s.a * (0.78 + 0.22 * Math.sin(t * s.f + s.p));
+      const a = reduce || !s.tw ? s.a : s.a * (0.72 + 0.28 * Math.sin(t * s.f + s.p)) * (0.92 + 0.08 * Math.sin(t * s.f * 2.7 + s.p * 1.9));
       dot(s.x, s.y, s.r, s.rgb, a, s.r > 1.3);
       if (s.spike) spikes(s.x, s.y, s.r * 7, s.rgb, a * .35);
     }
@@ -354,7 +357,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     for (const s of stars) {
       const hot = s === hover, rgb = starRGB(s.T);
       dot(s.x, s.y, hot ? 3.2 : 2.3, rgb, 1, true);
-      spikes(s.x, s.y, 14, rgb, .35 + (reduce ? 0 : .12 * Math.sin(t * 1.3 + s.x)));
+      spikes(s.x, s.y, 14, rgb, .35 + (reduce ? 0 : .15 * Math.sin(t * 2.1 + s.x)));
       if (hot) { ctx.strokeStyle = C('--c-prompt'); ctx.beginPath(); ctx.arc(s.x, s.y, 10, 0, 6.28); ctx.stroke(); }
     }
     for (const d of deep) {
@@ -378,6 +381,17 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
       ctx.beginPath(); ctx.arc(m.x, m.y, hot ? 2.4 : 1.3, 0, 6.28); ctx.fill();
       if (hot) { ctx.strokeStyle = C('--c-prompt'); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(m.x, m.y, 8, 0, 6.28); ctx.stroke(); }
     }
+    if (showAll) {
+      const sw = 7.5 * 15, sh = .85 * 15;                  // same size as the hover strip (rem → px)
+      ctx.globalAlpha = .88;
+      for (const o of objects) {
+        if (o === hover) continue;
+        let cv = stripCache.get(o);
+        if (!cv) { cv = document.createElement('canvas'); drawStrip(cv, o, sw, sh); stripCache.set(o, cv); }
+        ctx.drawImage(cv, o.x + 14, o.y - sh / 2, sw, sh);
+      }
+      ctx.globalAlpha = 1;
+    }
     requestAnimationFrame(draw);
   }
 
@@ -388,16 +402,17 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     if (i < 0 || i * 2 >= code.length) return null;
     return parseInt(code.substr(i * 2, 2), 10) / 50;
   }
-  function drawStrip(cv, o) {
-    const g = cv.getContext('2d'), w = cv.clientWidth, h = cv.clientHeight;
+  function drawStrip(cv, o, w = cv.clientWidth, h = cv.clientHeight) {
+    const g = cv.getContext('2d');
     cv.width = w * dpr; cv.height = h * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
     const code = o.sp ? SPECTRA[o.sp] : null;
     if (!code) {
+      if (o.paper) { drawBLAGN(g, w, h, o); return; }
       g.fillStyle = C('--ink-soft'); g.font = `8px ${C('--font')}`; g.textAlign = 'center';
       g.fillText('redshifted out of visible', w / 2, h / 2 + 3); return;
     }
-    const zf = 1 + o.z, gain = o.kind === 'agn' ? 0.62 : 1.0;   // quasar continuum dimmed so emission lines are bright
+    const zf = 1 + o.z, gain = o.kind === 'agn' ? 0.62 : 1.0;   // quasar continuum dimmed so emission lines read bright
     for (let x = 0; x < w; x++) {
       const lobs = VLO + (HI - VLO) * (x + .5) / w;
       let v = sample(code, lobs / zf); if (v === null) v = 0;
@@ -406,6 +421,29 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
       if (o.kind !== 'agn' && v < 1) v = Math.pow(v, 1.6);
       const [r, gg, b] = wl2rgb(lobs);
       g.fillStyle = `rgb(${Math.min(255, r * v * 255)|0},${Math.min(255, gg * v * 255)|0},${Math.min(255, b * v * 255)|0})`;
+      g.fillRect(x, 0, 1, h);
+    }
+  }
+
+  // Observed-frame NIRSpec spectrum (0.6–5.3 µm) in false colour: blue end = 0.6 µm, red end = 5.3 µm.
+  // Red LRD-like continuum plus broad Gaussian Hα and Hβ (FWHM from the paper) and narrow [O III], all shifted by (1+z).
+  function drawBLAGN(g, w, h, o) {
+    const lo = 0.6, hi = 5.3, zf = 1 + o.z, c = 299792.458;
+    const px = (hi - lo) / w;                                   // µm per pixel
+    const sig = l => Math.max(l * (o.fwhm / c) / 2.355 * 10, 2.5 * px), nsig = l => 0.6 * px;   // broad widths exaggerated ×10 so they read at this size
+    const gauss = (x, mu, s) => Math.exp(-0.5 * ((x - mu) / s) ** 2);
+    const lines = [[0.65628, 1.0, sig], [0.48613, 0.4, sig], [0.50068, 0.5, nsig], [0.49589, 0.17, nsig], [0.65628, 0.5, nsig], [1.8751, 0.3, sig]]; // broad Hα, broad Hβ, [O III] 5007/4959, narrow Hα, Paα
+    let maxv = 0; const vals = [];
+    for (let x = 0; x < w; x++) {
+      const l = lo + (hi - lo) * (x + .5) / w, r = l / zf;
+      let v = 0.22 + 0.5 * Math.max(0, Math.min(1, (r - 0.38) / 0.6));          // red continuum
+      for (const [mu, A, sf] of lines) v += 1.4 * A * gauss(l, mu * zf, sf(mu * zf));
+      vals.push(v); if (v > maxv) maxv = v;
+    }
+    for (let x = 0; x < w; x++) {
+      const lam = 380 + 380 * (x + .5) / w, v = Math.min(1, vals[x] / maxv * 1.15);
+      const [r, gg, b] = wl2rgb(lam);
+      g.fillStyle = `rgb(${(r * v * 255)|0},${(gg * v * 255)|0},${(b * v * 255)|0})`;
       g.fillRect(x, 0, 1, h);
     }
   }
@@ -459,7 +497,10 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     if (e.pointerType === 'mouse' && o) { window.open(linkOf(o), '_blank', 'noopener'); return; }
     if (o) { hover = o; pinned = true; showPanel(o); } else { hover = null; pinned = false; hidePanel(); }
   });
-  addEventListener('resize', () => { resize(); if (hover) showPanel(hover); });
+  addEventListener('resize', () => { resize(); stripCache.clear(); if (hover) showPanel(hover); });
+  addEventListener('keydown', e => {
+    if (e.key.toLowerCase() === 's' && !e.metaKey && !e.ctrlKey && !e.altKey && !/input|textarea/i.test(e.target.tagName)) showAll = !showAll;
+  });
   resize(); requestAnimationFrame(draw);
 })();
 </script>
