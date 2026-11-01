@@ -247,7 +247,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     { n:"Andromeda Galaxy", b:"M31", t:"SA(s)b spiral galaxy", d:"2.5 Mly", z:-0.0010, sp:"m31", src:"MIUSCAT SSP, 9 Gyr, solar", pos:["R",.40,.28], w:"Andromeda_Galaxy", kind:"gal", size:20, img:"nebulae/m31.jpg", credit:"Adam Evans, CC BY 2.0" },
     { n:"Messier 87", b:"M87 · Virgo A", t:"E0 cD elliptical, AGN", d:"53 Mly", z:0.0043, sp:"m87", src:"MIUSCAT SSP, 12.6 Gyr, [M/H]+0.22", pos:["R",.25,.85], w:"Messier_87", kind:"gal", size:13, img:"nebulae/m87.jpg", credit:"NASA/ESA Hubble" },
     { n:"3C 273", b:"quasar", t:"radio-loud quasar", d:"~2.4 Gly", z:0.158, sp:"qso", src:"Selsing+2016 QSO composite", pos:["R",.50,.90], w:"3C_273", kind:"agn" },
-    { n:"Orion Nebula", b:"M42 · H II region", d:"~1340 ly", z:0.00009, pos:["L",.50,.87], w:"Orion_Nebula", kind:"neb", img:"nebulae/orion2.jpg", credit:"NASA/ESA Hubble", neb:"hii", size:24 },
+    { n:"Orion Nebula", b:"M42 · H II region", d:"~1340 ly", z:0.00009, pos:["L",.50,.87], w:"Orion_Nebula", kind:"neb", img:"nebulae/orion2.jpg", credit:"my astrophotography", neb:"hii", size:24 },
     { n:"Ring Nebula", b:"M57 · planetary nebula", d:"~2500 ly", z:-0.00007, pos:["L",.445,.575], w:"Ring_Nebula", kind:"neb", img:"nebulae/ring.jpg", credit:"NASA/ESA Hubble", neb:"pn", size:9 },
     { n:"Owl Nebula", b:"M97 · planetary nebula", d:"~2000 ly", z:0.00001, pos:["L",.27,.31], w:"Owl_Nebula", kind:"neb", img:"nebulae/owl.jpg", credit:"G. Nilsson / Liverpool Telescope, CC BY-SA 4.0", neb:"pn", size:9 },
     { n:"Veil Nebula", b:"NGC 6960 · supernova remnant", d:"~2400 ly", z:0.00000, pos:["R",.78,.66], w:"Veil_Nebula", kind:"neb", img:"nebulae/veil.jpg", credit:"Ken Crawford, CC BY-SA 3.0", neb:"snr", size:12 },
@@ -267,7 +267,20 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
   const PAPER = 'https://iopscience.iop.org/article/10.3847/1538-4357/ae7de7/pdf';
   const linkOf = o => o.paper ? `${PAPER}#page=12` : `https://en.wikipedia.org/wiki/${o.w}`;
   const byName = Object.fromEntries(stars.map(s => [s.n, s]));
-  for (const d of deep) if (d.img) { const im = new Image(); im.onload = () => d.pic = im; im.src = d.img; }
+  for (const d of deep) if (d.img) {
+    const im = new Image();
+    im.onload = () => {
+      d.pic = im;
+      try {                                                    // negative copy for light mode
+        const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+        const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+        const id = g.getImageData(0, 0, c.width, c.height), p = id.data;
+        for (let i = 0; i < p.length; i += 4) { p[i] = 255 - p[i]; p[i + 1] = 255 - p[i + 1]; p[i + 2] = 255 - p[i + 2]; }
+        g.putImageData(id, 0, 0); d.picInv = c;
+      } catch (e) {}
+    };
+    im.src = d.img;
+  }
 
   // colour
   function starRGB(T) {
@@ -473,7 +486,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     for (const d of deep) {
       const hot = d === hover;
       if (d.pic) {
-        const R = d.size || 10, im = d.pic, s = Math.min(im.width, im.height);   // centre-crop to a circle
+        const R = d.size || 10, im = (light() && d.picInv) || d.pic, s = Math.min(im.width, im.height);   // centre-crop to a circle
         ctx.save(); ctx.beginPath(); ctx.arc(d.x, d.y, R, 0, 6.28); ctx.clip();
         ctx.globalAlpha = light() ? .85 : .95;
         ctx.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, d.x - R, d.y - R, 2 * R, 2 * R);
