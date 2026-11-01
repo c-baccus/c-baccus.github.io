@@ -492,7 +492,8 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
         ctx.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, d.x - R, d.y - R, 2 * R, 2 * R);
         ctx.restore();
         const edge = ctx.createRadialGradient(d.x, d.y, R * .7, d.x, d.y, R);   // soften the rim into the sky
-        edge.addColorStop(0, 'rgba(0,0,0,0)'); edge.addColorStop(1, light() ? 'rgba(245,241,232,.9)' : 'rgba(7,10,18,.9)');
+        const bgc = light() ? '245,241,232' : '7,10,18';
+        edge.addColorStop(0, `rgba(${bgc},0)`); edge.addColorStop(1, `rgba(${bgc},.9)`);
         ctx.fillStyle = edge; ctx.beginPath(); ctx.arc(d.x, d.y, R, 0, 6.28); ctx.fill();
       } else if (d.kind === 'gal') {
         ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(d.n[0] === 'A' ? -0.6 : 0); ctx.scale(1, d.n[0] === 'A' ? .45 : .85);
