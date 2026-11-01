@@ -245,13 +245,13 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     { n:"Andromeda Galaxy", b:"M31", t:"SA(s)b spiral galaxy", d:"2.5 Mly", z:-0.0010, sp:"m31", src:"MIUSCAT SSP, 9 Gyr, solar", pos:["R",.40,.28], w:"Andromeda_Galaxy", kind:"gal" },
     { n:"Messier 87", b:"M87 · Virgo A", t:"E0 cD elliptical, AGN", d:"53 Mly", z:0.0043, sp:"m87", src:"MIUSCAT SSP, 12.6 Gyr, [M/H]+0.22", pos:["R",.25,.85], w:"Messier_87", kind:"gal" },
     { n:"3C 273", b:"quasar", t:"radio-loud quasar", d:"~2.4 Gly", z:0.158, sp:"qso", src:"Selsing+2016 QSO composite", pos:["R",.50,.90], w:"3C_273", kind:"agn" },
-    { n:"Orion Nebula", b:"M42 · H II region", d:"~1340 ly", z:0.00009, pos:["L",.50,.87], w:"Orion_Nebula", kind:"neb", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg/128px-Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg", credit:"NASA/ESA Hubble", neb:"hii", size:14 },
-    { n:"Flame Nebula", b:"NGC 2024 · H II region", d:"~1350 ly", z:0.00003, pos:["L",.46,.805], w:"Flame_Nebula", kind:"neb", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/NASA-FlameNebula-NGC2024-20140507.jpg/128px-NASA-FlameNebula-NGC2024-20140507.jpg", credit:"NASA/Chandra", neb:"hii", size:9 },
-    { n:"Ring Nebula", b:"M57 · planetary nebula", d:"~2500 ly", z:-0.00007, pos:["L",.445,.575], w:"Ring_Nebula", kind:"neb", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/M57_The_Ring_Nebula.JPG/128px-M57_The_Ring_Nebula.JPG", credit:"NASA/ESA Hubble", neb:"pn", size:7 },
-    { n:"Owl Nebula", b:"M97 · planetary nebula", d:"~2000 ly", z:0.00001, pos:["L",.27,.31], w:"Owl_Nebula", kind:"neb", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/The_Owl_Nebula_M97_Goran_Nilsson_%26_The_Liverpool_Telescope.jpg/128px-The_Owl_Nebula_M97_Goran_Nilsson_%26_The_Liverpool_Telescope.jpg", credit:"G. Nilsson / Liverpool Telescope, CC BY-SA 4.0", neb:"pn", size:7 },
-    { n:"Veil Nebula", b:"NGC 6960 · supernova remnant", d:"~2400 ly", z:0.00000, pos:["R",.78,.66], w:"Veil_Nebula", kind:"neb", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Veil_Nebula_-_NGC6960.jpg/128px-Veil_Nebula_-_NGC6960.jpg", credit:"Ken Crawford, CC BY-SA 3.0", neb:"snr", size:12 },
-    { n:"Pacman Nebula", b:"NGC 281 · H II region", d:"~9500 ly", z:-0.00010, pos:["R",.34,.24], w:"NGC_281", kind:"neb", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/The_Pacman_Nebula.jpg/128px-The_Pacman_Nebula.jpg", credit:"NASA/CXC/JPL", neb:"hii", size:8 },
-    { n:"Heart Nebula", b:"IC 1805 · H II region", d:"~7500 ly", z:-0.00014, pos:["R",.90,.19], w:"Heart_Nebula", kind:"neb", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Heart_and_soul.jpg/128px-Heart_and_soul.jpg", credit:"Wikimedia Commons, CC0", neb:"hii", size:11 },
+    { n:"Orion Nebula", b:"M42 · H II region", d:"~1340 ly", z:0.00009, pos:["L",.50,.87], w:"Orion_Nebula", kind:"neb", img:"nebulae/orion.jpg", credit:"NASA/ESA Hubble", neb:"hii", size:14 },
+    { n:"Flame Nebula", b:"NGC 2024 · H II region", d:"~1350 ly", z:0.00003, pos:["L",.46,.805], w:"Flame_Nebula", kind:"neb", img:"nebulae/flame.jpg", credit:"NASA/Chandra", neb:"hii", size:9 },
+    { n:"Ring Nebula", b:"M57 · planetary nebula", d:"~2500 ly", z:-0.00007, pos:["L",.445,.575], w:"Ring_Nebula", kind:"neb", img:"nebulae/ring.jpg", credit:"NASA/ESA Hubble", neb:"pn", size:7 },
+    { n:"Owl Nebula", b:"M97 · planetary nebula", d:"~2000 ly", z:0.00001, pos:["L",.27,.31], w:"Owl_Nebula", kind:"neb", img:"nebulae/owl.jpg", credit:"G. Nilsson / Liverpool Telescope, CC BY-SA 4.0", neb:"pn", size:7 },
+    { n:"Veil Nebula", b:"NGC 6960 · supernova remnant", d:"~2400 ly", z:0.00000, pos:["R",.78,.66], w:"Veil_Nebula", kind:"neb", img:"nebulae/veil.jpg", credit:"Ken Crawford, CC BY-SA 3.0", neb:"snr", size:12 },
+    { n:"Pacman Nebula", b:"NGC 281 · H II region", d:"~9500 ly", z:-0.00010, pos:["R",.34,.24], w:"NGC_281", kind:"neb", img:"nebulae/pacman.jpg", credit:"NASA/CXC/JPL", neb:"hii", size:8 },
+    { n:"Heart Nebula", b:"IC 1805 · H II region", d:"~7500 ly", z:-0.00014, pos:["R",.90,.19], w:"Heart_Nebula", kind:"neb", img:"nebulae/heart.jpg", credit:"Wikimedia Commons, CC0", neb:"hii", size:11 },
   ];
   // Gly
   function lookback(z) { const n = 400; let s = 0; for (let i = 0; i < n; i++) { const zz = z * (i + .5) / n; s += 1 / ((1 + zz) * Math.sqrt(0.3 * (1 + zz) ** 3 + 0.7)); } return 13.97 * s * z / n; }
@@ -267,7 +267,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
   const PAPER = 'https://iopscience.iop.org/article/10.3847/1538-4357/ae7de7/pdf';
   const linkOf = o => o.paper ? `${PAPER}#page=12` : `https://en.wikipedia.org/wiki/${o.w}`;
   const byName = Object.fromEntries(stars.map(s => [s.n, s]));
-  for (const d of deep) if (d.img) { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => d.pic = im; im.src = d.img; }
+  for (const d of deep) if (d.img) { const im = new Image(); im.onload = () => d.pic = im; im.src = d.img; }
 
   // colour
   function starRGB(T) {
@@ -413,8 +413,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
       } else {
         dot(d.x, d.y, 1.4, d.lrd ? '200,90,70' : '150,190,235', 1, true);
       }
-      if (hot) { ctx.strokeStyle = C('--c-prompt'); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(d.x, d.y, 11, 0, 6.28); ctx.stroke(); }
-      else { ctx.strokeStyle = light() ? 'rgba(60,66,80,.45)' : 'rgba(127,137,156,.35)'; ctx.lineWidth = .7; ctx.beginPath(); ctx.arc(d.x, d.y, 7, 0, 6.28); ctx.stroke(); }
+      if (hot) { ctx.strokeStyle = C('--c-prompt'); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(d.x, d.y, (d.size || 10) + 3, 0, 6.28); ctx.stroke(); }
     }
     for (const m of mine) {
       const hot = m === hover;
