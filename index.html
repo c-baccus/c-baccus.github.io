@@ -108,6 +108,23 @@
     #panel .meta { white-space: normal; }
   }
   .skynote { color: var(--ink-soft); font-size: .8rem; padding-left: 0; margin-top: 1.5rem; }
+  .solve { display: flex; justify-content: flex-start; margin-top: .4rem; }
+  .solve label { display: inline-flex; align-items: center; gap: .6ch; color: var(--ink-soft); font-size: .75rem; cursor: pointer; user-select: none; }
+  .solve input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .solve .track { position: relative; width: 1.9rem; height: 1rem; border: 1px solid var(--ink-faint); border-radius: 1rem; transition: background .2s, border-color .2s; }
+  .solve .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: calc(1rem - 6px); height: calc(1rem - 6px); border-radius: 50%; background: var(--ink-soft); transition: transform .2s, background .2s; }
+  .solve input:checked + .track { background: var(--c-prompt); border-color: var(--c-prompt); }
+  .solve input:checked + .track::after { transform: translateX(.9rem); background: var(--bg); }
+  .solve label:hover { color: var(--c-prompt); }
+  #labels { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+  #labels a { position: absolute; pointer-events: auto; font-size: .55rem; line-height: 1; color: var(--ink-soft); text-decoration: none; white-space: nowrap; padding-left: .4rem; border-left: 1px solid var(--ink-faint); }
+  #labels a:hover { color: var(--c-prompt); border-color: var(--c-prompt); }
+  #labels a.lrd { color: #c9705e; }
+  #labels span.fs { position: absolute; font-size: .48rem; line-height: 1; color: rgba(90,210,130,.75); white-space: nowrap; padding-left: .3rem; }
+  :root[data-theme="light"] #labels span.fs { color: rgba(20,120,60,.8); }
+  #labels a.flip { padding-left: 0; padding-right: .4rem; border-left: none; border-right: 1px solid var(--ink-faint); }
+  #labels .con { position: absolute; pointer-events: auto; font-size: .62rem; letter-spacing: .25em; text-transform: uppercase; color: var(--ink-soft); opacity: .55; text-decoration: none; transform: translate(-50%, -50%); }
+  #labels .con:hover { opacity: 1; color: var(--c-prompt); }
   .skynote::before { content: "// "; }
   footer { color: var(--ink-soft); font-size: .8rem; text-align: center; padding: 0 1.25rem 2.1rem; }
   .lotus { display: block; margin: 1.5rem auto 0; color: #e8a0b4; }
@@ -183,12 +200,14 @@
 
   <p class="skynote">Hover over a star on the side for its spectrum (380–760 nm) hold for the name, redshift and distance, and click to learn more! Press S to toggle on/off all spectra.<br>
 (Stellar spectra are from MILES-library, M31 and M87 are from MIUSCAT population models, 3C 273 is from Selsing et al. quasar composite.)</p>
+  <div class="solve"><label><span>plate solve</span><input type="checkbox" id="solve"><span class="track"></span></label></div>
 </main>
 
 <canvas id="meteor" aria-hidden="true"></canvas>
 <figure>
   <canvas id="sky" aria-label="Interactive star map. Hover or tap a star to see its absorption spectrum, redshift, distance and type."></canvas>
   <div id="panel"></div>
+  <div id="labels"></div>
 </figure>
 
 <footer>last updated nov 2026<svg class="lotus" viewBox="29 -785 875 879" width="14" height="14" aria-hidden="true"><path transform="scale(1,-1)" d="M467 -94Q448 -79 429.0 -61.0Q410 -43 391 -22Q352 22 342 46Q284 32 229 32Q221 32 204.5 32.5Q188 33 173.0 34.0Q158 35 156 35L154 87Q152 141 156.0 171.5Q160 202 167 223Q153 229 133.5 243.0Q114 257 91 279Q68 302 52.5 318.5Q37 335 29 345Q43 362 60.0 380.0Q77 398 97 417Q118 437 136.0 449.5Q154 462 168 469Q161 489 157.0 521.5Q153 554 154 598L156 656Q161 657 182.5 658.0Q204 659 229 659Q265 659 293.5 656.0Q322 653 344 648Q350 662 362.5 679.0Q375 696 394 716Q413 736 431.5 753.5Q450 771 467 785Q488 775 529 727Q550 703 565.0 683.0Q580 663 590 646Q629 659 704 659Q730 659 750.5 658.0Q771 657 778 656L780 587Q781 549 777.0 519.0Q773 489 766 469Q781 462 806 442Q819 432 832.5 420.0Q846 408 861 392Q876 376 886.5 364.5Q897 353 904 345Q900 340 885.5 324.0Q871 308 851.0 288.0Q831 268 809.0 250.0Q787 232 767 223Q782 178 780 103L778 35Q776 34 760.0 33.5Q744 33 727.5 32.5Q711 32 704 32Q629 32 590 45Q583 32 569.0 13.0Q555 -6 533 -32Q491 -83 467 -94ZM467 -47Q498 -25 527 11Q557 49 557 64Q557 82 542.5 117.5Q528 153 503 196L535 218Q540 208 544.5 198.5Q549 189 553 179Q561 162 568.5 145.0Q576 128 583 111Q588 100 594.0 92.5Q600 85 604 81Q613 74 640.0 69.0Q667 64 702 64Q730 64 745 68Q746 76 746.5 85.5Q747 95 747 107Q747 145 742.0 177.0Q737 209 729 215L722 221Q675 234 591 277L614 310Q655 285 691.0 270.5Q727 256 746 256Q763 256 799 286Q818 302 832.5 317.0Q847 332 857 346Q847 360 832.5 374.0Q818 388 799 404Q761 436 746 436Q742 436 730.0 433.0Q718 430 706 425Q693 420 669.0 410.5Q645 401 605 386L597 426Q614 430 632.5 435.5Q651 441 671 449Q691 457 706.0 465.0Q721 473 729 481Q736 488 741.5 518.0Q747 548 747 583Q747 596 746.5 606.5Q746 617 745 624Q735 625 724.5 625.5Q714 626 702 626Q687 626 673.0 625.0Q659 624 646 622Q620 619 606.5 611.5Q593 604 582 577Q570 547 535 473L503 495Q528 539 542.5 574.0Q557 609 557 627Q557 641 526 680Q495 719 467 738Q439 720 407 681Q376 644 376 627Q376 611 390.5 575.0Q405 539 430 495L398 473Q358 554 341 605Q325 614 290 620Q256 626 231 626Q219 626 208.5 625.5Q198 625 189 624Q186 611 186 583Q186 551 191.0 520.0Q196 489 205 481Q221 466 261 450Q302 434 336 426L329 386Q250 418 221 428Q208 433 199.5 434.5Q191 436 187 436Q180 436 166.5 427.5Q153 419 133 403Q94 372 76 346Q98 315 134 286Q172 256 187 256Q208 256 245.0 271.5Q282 287 319 310L342 277Q252 231 211 221L205 215Q198 208 192.0 176.5Q186 145 186 107Q186 82 189 68Q204 64 231 64Q245 64 261.5 65.0Q278 66 295 70Q332 78 341 84Q352 121 398 218L430 196Q405 153 390.5 117.0Q376 81 376 64Q376 48 407 10Q439 -27 467 -47ZM467 363Q460 363 456.0 379.0Q452 395 452 418Q452 439 456.0 456.5Q460 474 467 474Q473 474 477.5 457.0Q482 440 482 418Q482 395 478.0 379.0Q474 363 467 363ZM484 357Q477 357 477 364Q477 375 491.5 393.0Q506 411 523.5 426.0Q541 441 550 441Q556 441 556 435Q556 424 542.0 405.5Q528 387 511.0 372.0Q494 357 484 357ZM449 357Q441 357 423.5 371.5Q406 386 392.0 404.5Q378 423 378 434Q378 441 384 441Q392 441 404.0 431.5Q416 422 428.0 408.5Q440 395 448.5 382.5Q457 370 457 364Q457 357 449 357ZM394 330Q371 330 355.0 334.5Q339 339 339 346Q339 352 355.0 356.5Q371 361 394 361Q416 361 433.0 357.0Q450 353 450 346Q450 339 433.5 334.5Q417 330 394 330ZM539 330Q516 330 500.0 334.5Q484 339 484 346Q484 352 500.0 356.5Q516 361 539 361Q561 361 578.0 357.0Q595 353 595 346Q595 339 578.5 334.5Q562 330 539 330ZM548 250Q538 250 521.0 265.0Q504 280 490.5 298.5Q477 317 477 328Q477 335 483 335Q490 335 502.0 326.0Q514 317 526.5 304.0Q539 291 547.5 277.5Q556 264 556 256Q556 250 548 250ZM386 250Q378 250 378 257Q378 265 387.0 278.0Q396 291 408.5 304.0Q421 317 433.0 326.0Q445 335 451 335Q457 335 457 328Q457 317 443.0 298.0Q429 279 412.0 264.5Q395 250 386 250ZM467 218Q460 218 456.0 234.0Q452 250 452 273Q452 294 456.0 311.5Q460 329 467 329Q473 329 477.5 312.0Q482 295 482 273Q482 250 478.0 234.0Q474 218 467 218Z" fill="currentColor"/></svg></footer>
@@ -203,7 +222,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     { n:"Dubhe", b:"α UMa", t:"K0 III giant", T:4700, d:"123 ly", pos:["L",.18,.14], w:"Dubhe" },
     { n:"Merak", b:"β UMa", t:"A1 V dwarf", T:9300, d:"80 ly", pos:["L",.20,.26], w:"Merak" },
     { n:"Phecda", b:"γ UMa", t:"A0 Ve dwarf", T:9600, d:"83 ly", pos:["L",.42,.28], w:"Phecda" },
-    { n:"Megrez", b:"δ UMa", t:"A3 V dwarf", T:8700, d:"81 ly", pos:["L",.40,.18], w:"Megrez" },
+    { n:"Megrez", b:"δ UMa", lab:[0, -13], t:"A3 V dwarf", T:8700, d:"81 ly", pos:["L",.40,.18], w:"Megrez" },
     { n:"Alioth", b:"ε UMa", t:"A1p peculiar", T:9300, d:"83 ly", pos:["L",.56,.13], w:"Alioth" },
     { n:"Mizar", b:"ζ UMa", t:"A2 V quadruple", T:9000, d:"83 ly", pos:["L",.70,.09], w:"Mizar" },
     { n:"Alkaid", b:"η UMa", t:"B3 V dwarf", T:17000, d:"104 ly", pos:["L",.82,.12], w:"Alkaid" },
@@ -221,13 +240,13 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     { n:"Epsilon Lyr", b:"ε Lyr", t:"A-type, Double Double", T:8000, d:"160 ly", pos:["L",.44,.41], w:"Epsilon_Lyrae" },
     { n:"Zeta Lyr", b:"ζ Lyr", t:"Am spectroscopic binary", T:8000, d:"156 ly", pos:["L",.40,.48], w:"Zeta_Lyrae" },
     { n:"Sheliak", b:"β Lyr", t:"B7 II eclipsing binary", T:13000, d:"~960 ly", pos:["L",.37,.56], w:"Sheliak" },
-    { n:"Sulafat", b:"γ Lyr", t:"B9 III giant", T:10000, d:"620 ly", pos:["L",.52,.58], w:"Gamma_Lyrae" },
+    { n:"Sulafat", b:"γ Lyr", lab:[0, 8], t:"B9 III giant", T:10000, d:"620 ly", pos:["L",.52,.58], w:"Gamma_Lyrae" },
     { n:"Delta2 Lyr", b:"δ² Lyr", t:"M4 II red bright giant", T:3400, d:"~740 ly", pos:["L",.55,.50], w:"Delta2_Lyrae" },
     { n:"Betelgeuse", b:"α Ori", t:"M1–2 Ia red supergiant", T:3600, d:"~550 ly", pos:["L",.25,.66], w:"Betelgeuse" },
     { n:"Bellatrix", b:"γ Ori", t:"B2 III giant", T:22000, d:"250 ly", pos:["L",.75,.67], w:"Bellatrix" },
-    { n:"Alnitak", b:"ζ Ori", t:"O9.5 Iab supergiant", T:30000, d:"~1260 ly", pos:["L",.42,.80], w:"Alnitak" },
-    { n:"Alnilam", b:"ε Ori", t:"B0 Ia supergiant", T:27000, d:"~2000 ly", pos:["L",.50,.79], w:"Alnilam" },
-    { n:"Mintaka", b:"δ Ori", t:"O9.5 II multiple", T:29000, d:"~1200 ly", pos:["L",.58,.78], w:"Mintaka" },
+    { n:"Alnitak", b:"ζ Ori", lab:[-6, 9], t:"O9.5 Iab supergiant", T:30000, d:"~1260 ly", pos:["L",.42,.80], w:"Alnitak" },
+    { n:"Alnilam", b:"ε Ori", lab:[0, -13], t:"B0 Ia supergiant", T:27000, d:"~2000 ly", pos:["L",.50,.79], w:"Alnilam" },
+    { n:"Mintaka", b:"δ Ori", lab:[6, 2], t:"O9.5 II multiple", T:29000, d:"~1200 ly", pos:["L",.58,.78], w:"Mintaka" },
     { n:"Saiph", b:"κ Ori", t:"B0.5 Ia supergiant", T:26000, d:"~650 ly", pos:["L",.33,.95], w:"Saiph" },
     { n:"Rigel", b:"β Ori", t:"B8 Ia supergiant", T:12000, d:"~860 ly", pos:["L",.78,.94], w:"Rigel" },
   ];
@@ -248,7 +267,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     { n:"Messier 87", b:"M87 · Virgo A", t:"E0 cD elliptical, AGN", d:"53 Mly", z:0.0043, sp:"m87", src:"MIUSCAT SSP, 12.6 Gyr, [M/H]+0.22", pos:["R",.25,.85], w:"Messier_87", kind:"gal", size:13, img:"nebulae/m87.jpg", credit:"NASA/ESA Hubble" },
     { n:"3C 273", b:"quasar", t:"radio-loud quasar", d:"~2.4 Gly", z:0.158, sp:"qso", src:"Selsing+2016 QSO composite", pos:["R",.50,.90], w:"3C_273", kind:"agn" },
     { n:"Orion Nebula", b:"M42 · H II region", d:"~1340 ly", z:0.00009, pos:["L",.50,.87], w:"Orion_Nebula", kind:"neb", img:"nebulae/orion2.jpg", credit:"my astrophotography", neb:"hii", size:24 },
-    { n:"Ring Nebula", b:"M57 · planetary nebula", d:"~2500 ly", z:-0.00007, pos:["L",.445,.575], w:"Ring_Nebula", kind:"neb", img:"nebulae/ring.jpg", credit:"NASA/ESA Hubble", neb:"pn", size:9 },
+    { n:"Ring Nebula", b:"M57 · planetary nebula", lab:[0, -14], d:"~2500 ly", z:-0.00007, pos:["L",.445,.575], w:"Ring_Nebula", kind:"neb", img:"nebulae/ring.jpg", credit:"NASA/ESA Hubble", neb:"pn", size:9 },
     { n:"Owl Nebula", b:"M97 · planetary nebula", d:"~2000 ly", z:0.00001, pos:["L",.27,.31], w:"Owl_Nebula", kind:"neb", img:"nebulae/owl.jpg", credit:"G. Nilsson / Liverpool Telescope, CC BY-SA 4.0", neb:"pn", size:9 },
     { n:"Veil Nebula", b:"NGC 6960 · supernova remnant", d:"~2400 ly", z:0.00000, pos:["R",.78,.66], w:"Veil_Nebula", kind:"neb", img:"nebulae/veil.jpg", credit:"Ken Crawford, CC BY-SA 3.0", neb:"snr", size:12 },
     { n:"Heart Nebula", b:"IC 1805 · H II region", d:"~7500 ly", z:-0.00014, pos:["R",.90,.19], w:"Heart_Nebula", kind:"neb", img:"nebulae/heart.jpg", credit:"Wikimedia Commons, CC0", neb:"hii", size:11 },
@@ -302,6 +321,49 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     const f = l < 420 ? .3 + .7 * (l - 380) / 40 : l > 700 ? Math.max(.3, 1 - .7 * (l - 700) / 60) : 1;
     return [r * f, g * f, b * f];
   }
+
+  // plate solve: label everything
+  const CONS = [["Ursa Major", ["Dubhe","Merak","Phecda","Megrez","Alioth","Mizar","Alkaid"]], ["Cassiopeia", ["Caph","Schedar","Gamma Cas","Ruchbah","Segin"]],
+    ["Cygnus", ["Deneb","Sadr","Delta Cyg","Gienah","Albireo"]], ["Lyra", ["Vega","Epsilon Lyr","Zeta Lyr","Sheliak","Sulafat","Delta2 Lyr"], [-26, 0]], ["Orion", ["Betelgeuse","Bellatrix","Alnitak","Alnilam","Mintaka","Saiph","Rigel"], [0, -60]]];
+  const labels = document.getElementById('labels'), solveBox = document.getElementById('solve');
+  let solveStars = [];
+  function buildLabels() {
+    labels.innerHTML = '';
+    solveStars = solveBox.checked ? field.filter(s => s.r > 0.6).sort((a, b) => b.r - a.r).slice(0, 420) : [];
+    if (!solveBox.checked) return;
+    // circles as one static SVG so they never move or flicker
+    const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('width', W); svg.setAttribute('height', H); svg.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none';
+    const circ = (x, y, r, col) => { const c = document.createElementNS(ns, 'circle'); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', r); c.setAttribute('fill', 'none'); c.setAttribute('stroke', col); c.setAttribute('stroke-width', '.8'); svg.appendChild(c); };
+    const green = light() ? 'rgba(20,130,70,.6)' : 'rgba(80,220,120,.55)', green2 = light() ? 'rgba(20,130,70,.35)' : 'rgba(80,220,120,.3)', red = light() ? 'rgba(190,60,40,.7)' : 'rgba(255,110,90,.75)';
+    for (const s of solveStars) circ(s.x, s.y, 5 + s.r * 2.2, green);
+    for (const o of objects) { circ(o.x, o.y, (o.size || 4) + 6, red); circ(o.x, o.y, (o.size || 4) + 11, green2); }
+    labels.appendChild(svg);
+    solveStars.slice(0, 160).forEach((s, i) => {                                   // brighter ones get a magnitude tag
+      const e = document.createElement('span'); e.className = 'fs';
+      const mag = (5.2 + (1.75 - s.r) * 3.4 + (i % 7) * 0.07).toFixed(1);
+      e.textContent = `m ${mag}`;
+      e.style.left = (s.x + 5 + s.r * 2.2) + 'px'; e.style.top = (s.y - 3) + 'px';
+      labels.appendChild(e);
+    });
+    for (const o of objects) {
+      const a = document.createElement('a'); a.href = linkOf(o); a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = o.n; if (o.lrd) a.className = 'lrd';
+      labels.appendChild(a);
+      const [dx, dy] = o.lab || [0, 0];
+      let lx = o.x + (o.size || 3) + 4 + dx, ly = o.y - 4 + dy;
+      if (lx + a.offsetWidth > W - 4) { lx = o.x - (o.size || 3) - 4 - a.offsetWidth + dx; a.classList.add('flip'); }
+      ly = Math.max(2, Math.min(H - 10, ly));
+      if (ly < 10 && o.paper) ly = o.y + 6;                                    // my objects sit at the very top
+      a.style.left = lx + 'px'; a.style.top = ly + 'px';
+    }
+    for (const [name, members, off = [0, 0]] of CONS) {
+      const pts = members.map(m => byName[m]); const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length + off[0], cy = pts.reduce((s, p) => s + p.y, 0) / pts.length + off[1];
+      const a = document.createElement('a'); a.className = 'con'; a.href = `https://en.wikipedia.org/wiki/${name.replace(' ', '_')}`; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = name; a.style.left = cx + 'px'; a.style.top = cy + 'px'; labels.appendChild(a);
+    }
+  }
+  solveBox.addEventListener('change', buildLabels);
 
   // sky
   const canvas = document.getElementById('sky');
@@ -541,7 +603,22 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     if (i < 0 || i * 2 >= code.length) return null;
     return parseInt(code.substr(i * 2, 2), 10) / 50;
   }
+  // light mode: a 1920s photographic plate negative — exposed continuum is dark, absorption lines show as pale gaps
+  function plate(v) {
+    const d = Math.min(1, Math.max(0, v) / 1.3);                     // density
+    const k = 232 - 185 * Math.pow(d, 0.8);                           // pale paper → dark emulsion
+    return `rgb(${(k * 0.98)|0},${(k * 0.95)|0},${(k * 0.9)|0})`;      // warm silver tone
+  }
+  function grain(g, w, h) {
+    if (!light()) return;
+    const id = g.getImageData(0, 0, w * dpr, h * dpr), p = id.data;
+    for (let i = 0; i < p.length; i += 4) { const n = (Math.random() - .5) * 26; p[i] += n; p[i + 1] += n; p[i + 2] += n; }
+    g.putImageData(id, 0, 0);
+    g.globalAlpha = .18; g.fillStyle = '#8a7a5a';                      // faint fogged border like an old plate
+    g.fillRect(0, 0, w, 1); g.fillRect(0, h - 1, w, 1); g.globalAlpha = 1;
+  }
   function fadeEnds(g, w, h) {
+    grain(g, w, h);
     g.globalCompositeOperation = 'destination-out';
     const L = g.createLinearGradient(0, 0, w * 0.14, 0); L.addColorStop(0, 'rgba(0,0,0,1)'); L.addColorStop(1, 'rgba(0,0,0,0)');
     g.fillStyle = L; g.fillRect(0, 0, w * 0.14, h);
@@ -567,7 +644,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
       v = Math.min(1.6, v * gain);
       if (o.kind !== 'agn' && v < 1) v = Math.pow(v, 1.6);
       const [r, gg, b] = wl2rgb(lobs);
-      g.fillStyle = `rgb(${Math.min(255, r * v * 255)|0},${Math.min(255, gg * v * 255)|0},${Math.min(255, b * v * 255)|0})`;
+      g.fillStyle = light() ? plate(v) : `rgb(${Math.min(255, r * v * 255)|0},${Math.min(255, gg * v * 255)|0},${Math.min(255, b * v * 255)|0})`;
       g.fillRect(x, 0, 1, h);
     }
     fadeEnds(g, w, h);
@@ -590,7 +667,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     for (let x = 0; x < w; x++) {
       const lam = 380 + 380 * (x + .5) / w, v = Math.min(1, vals[x] / maxv * 1.15);
       const [r, gg, b] = wl2rgb(lam);
-      g.fillStyle = `rgb(${(r * v * 255)|0},${(gg * v * 255)|0},${(b * v * 255)|0})`;
+      g.fillStyle = light() ? plate(v) : `rgb(${(r * v * 255)|0},${(gg * v * 255)|0},${(b * v * 255)|0})`;
       g.fillRect(x, 0, 1, h);
     }
     fadeEnds(g, w, h);
@@ -614,7 +691,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     for (let x = 0; x < w; x++) {
       const lam = VLO + (HI - VLO) * (x + .5) / w, v = vals[x];
       const [r, gg, b] = wl2rgb(lam);
-      g.fillStyle = `rgb(${(r * v * 255)|0},${(gg * v * 255)|0},${(b * v * 255)|0})`;
+      g.fillStyle = light() ? plate(v) : `rgb(${(r * v * 255)|0},${(gg * v * 255)|0},${(b * v * 255)|0})`;
       g.fillRect(x, 0, 1, h);
     }
     fadeEnds(g, w, h);
@@ -670,7 +747,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     if (e.pointerType === 'mouse' && o) { window.open(linkOf(o), '_blank', 'noopener'); return; }
     if (o) { hover = o; pinned = true; showPanel(o); } else { hover = null; pinned = false; hidePanel(); }
   });
-  addEventListener('resize', () => { resize(); stripCache.clear(); if (hover) showPanel(hover); });
+  addEventListener('resize', () => { resize(); stripCache.clear(); buildLabels(); if (hover) showPanel(hover); });
   addEventListener('keydown', e => {
     if (e.key.toLowerCase() === 's' && !e.metaKey && !e.ctrlKey && !e.altKey && !/input|textarea/i.test(e.target.tagName)) showAll = !showAll;
   });
@@ -678,7 +755,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
   function applyTheme(mode) {
     if (mode === 'light') document.documentElement.dataset.theme = 'light'; else delete document.documentElement.dataset.theme;
     themeBtn.innerHTML = mode === 'light' ? `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>` : `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>`;
-    resize(); stripCache.clear(); if (hover) showPanel(hover);
+    resize(); stripCache.clear(); buildLabels(); if (hover) showPanel(hover);
   }
   themeBtn.addEventListener('click', () => {
     const mode = light() ? 'dark' : 'light';
