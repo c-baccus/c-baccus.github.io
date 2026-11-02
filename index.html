@@ -95,7 +95,6 @@
     display: flex; align-items: center; gap: .55rem; max-width: calc(100vw - 2rem); z-index: 2;
   }
   #panel.on { opacity: 1; }
-  #panel.on .meta a { pointer-events: auto; }
   #panel .strip canvas { display: block; width: 7.5rem; height: .85rem; opacity: .88; }
   #panel .meta { white-space: nowrap; display: none; background: var(--bg); padding: .15rem .4rem; }
   #panel.full .meta { display: block; }
@@ -103,6 +102,7 @@
   #panel .head a { margin-left: 1.2ch; }
   #panel .meta .lbl { color: var(--ink-soft); margin-right: .6ch; }
   #panel .meta .z { color: var(--c-str); }
+  #panel .meta .bayer { color: var(--ink-soft); }
   @media (min-width: 1000px) {
     #panel { flex-direction: column; align-items: flex-start; gap: .3rem; }
     #panel .meta { white-space: normal; }
@@ -149,7 +149,7 @@
 
   <section>
     <h2>about</h2>
-    <p>Sophomore undergraduate at <a class="k" href="https://as.nyu.edu/departments/physics.html" target="_blank" rel="noopener">NYU</a>.</p>
+        <p>Sophomore undergraduate at <a class="k" href="https://as.nyu.edu/departments/physics.html" target="_blank" rel="noopener">NYU</a>.</p>
     <p>My current research focuses on implementing Simulation-Based Inference techniques for the <a class="k" href="https://www.camel-simulations.org/" target="_blank" rel="noopener">CAMELS</a> simulation framework to constrain astrophysical and cosmological parameters.</p>
     <p>Previously, I identified and published what is currently the largest sample of high-redshift supermassive black holes (BLAGN) from <a class="k" href="https://jwst-docs.stsci.edu/jwst-near-infrared-spectrograph#gsc.tab=0" target="_blank" rel="noopener">JWST/NIRSpec</a>.</p>
     <p>Before that, I worked on synapse pruning and the aging hippocampus at Stanford.</p>
@@ -485,10 +485,11 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
         if (k < 1 && !meteor.fireball) {
           const tx = hx - ux * meteor.len, ty = hy - uy * meteor.len;
           const tg = g.createLinearGradient(tx, ty, hx, hy);
-          tg.addColorStop(0, 'rgba(235,240,255,0)'); tg.addColorStop(1, `rgba(245,248,255,${0.9 * fade})`);
+          const sc = light() ? '40,46,60' : '245,248,255';
+          tg.addColorStop(0, `rgba(${sc},0)`); tg.addColorStop(1, `rgba(${sc},${0.9 * fade})`);
           g.strokeStyle = tg; g.lineWidth = .8; g.lineCap = 'round';
           g.beginPath(); g.moveTo(tx, ty); g.lineTo(hx, hy); g.stroke();
-          g.fillStyle = `rgba(255,255,255,${fade})`; g.beginPath(); g.arc(hx, hy, 1, 0, 6.28); g.fill();
+          g.fillStyle = `rgba(${sc},${fade})`; g.beginPath(); g.arc(hx, hy, 1, 0, 6.28); g.fill();
         }
         if (k < 1 && meteor.fireball) {
           // emit fire particles from just behind the head
@@ -506,17 +507,23 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
         }
         // particles (additive blending makes the overlapping sprites read as flame)
         if (particles.length) {
-          g.save(); g.globalCompositeOperation = 'lighter';
+          g.save(); g.globalCompositeOperation = light() ? 'source-over' : 'lighter';
           const alive = [];
           for (const p of particles) {
             const a = (now - p.born) / p.life; if (a >= 1) continue; alive.push(p);
             const sec = 1 / 60; p.x += p.vx * sec; p.y += p.vy * sec; p.vy -= 25 * sec;   // slight buoyancy
             const r = p.r * (1 + 1.6 * a), al = (1 - a) * (1 - a);
             // white → yellow → orange → red → smoke
-            const col = a < .15 ? '255,250,220' : a < .4 ? '255,210,90' : a < .7 ? '255,120,30' : '150,40,15';
-            g.globalAlpha = al * (a < .7 ? 1 : .5);
-            g.drawImage(flame, p.x - r, p.y - r, 2 * r, 2 * r);
-            g.fillStyle = `rgba(${col},${0.25 * al})`; g.beginPath(); g.arc(p.x, p.y, r * .5, 0, 6.28); g.fill();
+            if (light()) {                                               // embers on paper: dark red → rust → grey smoke
+              const col = a < .08 ? '255,200,80' : a < .2 ? '200,70,15' : a < .5 ? '150,50,15' : a < .75 ? '120,70,50' : '90,90,95';
+              g.globalAlpha = al * 0.75; g.fillStyle = `rgba(${col},1)`;
+              g.beginPath(); g.arc(p.x, p.y, r * .55, 0, 6.28); g.fill();
+            } else {
+              const col = a < .15 ? '255,250,220' : a < .4 ? '255,210,90' : a < .7 ? '255,120,30' : '150,40,15';
+              g.globalAlpha = al * (a < .7 ? 1 : .5);
+              g.drawImage(flame, p.x - r, p.y - r, 2 * r, 2 * r);
+              g.fillStyle = `rgba(${col},${0.25 * al})`; g.beginPath(); g.arc(p.x, p.y, r * .5, 0, 6.28); g.fill();
+            }
           }
           particles = alive;
           g.restore();
@@ -524,12 +531,24 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
         if (k < 1 && meteor.fireball) {
           // the head itself: flickering, over the plume
           const fl = 0.8 + 0.2 * Math.sin(now * 0.06 + meteor.seed) + 0.2 * (Math.random() - .5);
-          g.save(); g.globalCompositeOperation = 'lighter';
           const R = (14 + 6 * fl) * (0.5 + 0.5 * fade);
-          g.globalAlpha = fade * fl; g.drawImage(flame, hx - R, hy - R, 2 * R, 2 * R);
-          g.globalAlpha = fade; g.drawImage(flame, hx - R * .45, hy - R * .45, R * .9, R * .9);
-          g.restore();
-          g.fillStyle = `rgba(255,255,250,${fade})`; g.beginPath(); g.arc(hx, hy, 1.8 + 0.6 * fl, 0, 6.28); g.fill();
+          if (light()) {
+            // dark ember shell with a bright, lit core burning inside it
+            const hg = g.createRadialGradient(hx, hy, 0, hx, hy, R * .8);
+            hg.addColorStop(0, `rgba(60,15,5,${fade})`); hg.addColorStop(.45, `rgba(150,50,15,${0.7 * fade * fl})`); hg.addColorStop(1, 'rgba(150,50,15,0)');
+            g.fillStyle = hg; g.beginPath(); g.arc(hx, hy, R * .8, 0, 6.28); g.fill();
+            const core = g.createRadialGradient(hx, hy, 0, hx, hy, R * .32);
+            core.addColorStop(0, `rgba(255,250,215,${fade})`); core.addColorStop(.4, `rgba(255,205,80,${fade * fl})`);
+            core.addColorStop(.8, `rgba(255,120,30,${0.8 * fade * fl})`); core.addColorStop(1, 'rgba(255,90,20,0)');
+            g.fillStyle = core; g.beginPath(); g.arc(hx, hy, R * .32, 0, 6.28); g.fill();
+            g.fillStyle = `rgba(255,255,245,${fade})`; g.beginPath(); g.arc(hx, hy, 1.2 + 0.5 * fl, 0, 6.28); g.fill();
+          } else {
+            g.save(); g.globalCompositeOperation = 'lighter';
+            g.globalAlpha = fade * fl; g.drawImage(flame, hx - R, hy - R, 2 * R, 2 * R);
+            g.globalAlpha = fade; g.drawImage(flame, hx - R * .45, hy - R * .45, R * .9, R * .9);
+            g.restore();
+            g.fillStyle = `rgba(255,255,250,${fade})`; g.beginPath(); g.arc(hx, hy, 1.8 + 0.6 * fl, 0, 6.28); g.fill();
+          }
         }
         if (k >= 1 && !particles.length) { meteor = null; nextMeteor = now + METEOR_GAP(); }
       }
@@ -703,9 +722,9 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
     const zs = Math.abs(o.z) < 0.01 ? o.z.toFixed(5) : o.z.toFixed(3);
     panel.innerHTML =
       `<div class="strip"><canvas></canvas></div>` +
-      `<div class="meta"><div class="head"><span class="nm">&gt; ${o.n}</span> <span class="bayer">${o.b}</span>` +
-      `<a href="${linkOf(o)}" target="_blank" rel="noopener">${o.paper ? 'my paper' : 'wiki'} →</a>${o.credit ? `<span class="bayer"> · image ${o.credit}</span>` : ''}</div>` +
-      `<div><span class="lbl">z</span><span class="z">${zs}</span><span class="lbl" style="margin-left:1.5ch">dist</span>${o.d}</div></div>`;
+      `<div class="meta"><div class="head"><span class="nm">&gt; ${o.n}</span> <span class="bayer">${o.b}</span></div>` +
+      `<div><span class="lbl">z</span><span class="z">${zs}</span><span class="lbl" style="margin-left:1.5ch">dist</span>${o.d}</div>` +
+      (o.credit ? `<div class="bayer">image: ${o.credit}</div>` : '') + `</div>`;
     drawStrip(panel.querySelector('canvas'), o);
     const pw = panel.offsetWidth, ph = panel.offsetHeight;
     let x = o.x + 14, y = o.y - 10;
@@ -734,7 +753,7 @@ const BLAGN = [["GDN_4762_16620",189.071156,62.169815,0.8451,0,12,"GOODS-N"],["J
 
   addEventListener('pointermove', e => {
     if (e.pointerType !== 'mouse' || pinned) return;
-    const o = pick(...pos(e)), onLink = e.target.closest && e.target.closest('#panel a');
+    const o = pick(...pos(e)), onLink = false;
     canvas.style.cursor = o ? 'pointer' : 'default';
     if (o && o !== hover) { hover = o; showPanel(o); }
     else if (!o && hover && !onLink) {
